@@ -8,3 +8,4 @@ export default defineConfig({
     open: false,
   },
 });
+// TODO: refine vite.config.ts layout spacing
