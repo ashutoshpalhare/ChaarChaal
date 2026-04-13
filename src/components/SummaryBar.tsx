@@ -65,3 +65,4 @@ export const SummaryBar: React.FC<SummaryBarProps> = ({
     </section>
   );
 };
+// TODO: refine SummaryBar.tsx layout spacing
