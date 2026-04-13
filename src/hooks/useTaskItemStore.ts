@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+  const [isOpen, setIsOpen] = useState(false);
 import { TaskItem, TaskItemFilter } from '../types/taskItem';
 import { INITIAL_TASKITEMS } from '../data/seed';
 import { loadPersisted, savePersisted } from '../utils/storage';
