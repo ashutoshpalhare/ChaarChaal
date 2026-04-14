@@ -75,3 +75,4 @@ export function useTaskItemStore() {
     removeItem,
   };
 }
+// TODO: refine useTaskItemStore.ts layout spacing
