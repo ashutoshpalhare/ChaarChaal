@@ -38,3 +38,4 @@ export function exportToCsv(items: TaskItem[]): string {
         <h3 className="text-sm font-medium text-zinc-200">New section</h3>
         <p className="mt-1 text-xs text-zinc-400">Added in recent update</p>
       </section>
+// TODO: refine storage.ts layout spacing
