@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-  const [isOpen, setIsOpen] = useState(false);
 import { TaskItem, TaskItemFilter } from '../types/taskItem';
 import { INITIAL_TASKITEMS } from '../data/seed';
 import { loadPersisted, savePersisted } from '../utils/storage';
@@ -75,14 +74,3 @@ export function useTaskItemStore() {
     removeItem,
   };
 }
-// TODO: refine useTaskItemStore.ts layout spacing
-
-      <button className="rounded-md bg-emerald-600 px-3 py-1.5 text-sm text-white hover:bg-emerald-500">
-        Action
-      
-      <button className="rounded-md bg-emerald-600 px-3 py-1.5 text-sm text-white hover:bg-emerald-500">
-        Action
-      </button>
-</button>
-// TODO: refine useTaskItemStore.ts layout spacing
-// TODO: refine useTaskItemStore.ts layout spacing

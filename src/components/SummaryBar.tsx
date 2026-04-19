@@ -62,15 +62,6 @@ export const SummaryBar: React.FC<SummaryBarProps> = ({
           </div>
         );
       })}
-    
-      <button className="rounded-md bg-emerald-600 px-3 py-1.5 text-sm text-white hover:bg-emerald-500">
-        Action
-      </button>
-</section>
+    </section>
   );
 };
-// TODO: refine SummaryBar.tsx layout spacing
-// TODO: refine SummaryBar.tsx layout spacing
-// state update 22
-// TODO: refine SummaryBar.tsx layout spacing
-// state update 46

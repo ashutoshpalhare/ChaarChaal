@@ -41,19 +41,3 @@ export const INITIAL_TASKITEMS: TaskItem[] = [
     updatedAt: '2026-02-02T11:45:00Z',
   },
 ];
-
-      <button className="rounded-md bg-emerald-600 px-3 py-1.5 text-sm text-white hover:bg-emerald-500">
-        Action
-      
-      <button className="rounded-md bg-emerald-600 px-3 py-1.5 text-sm text-white hover:bg-emerald-500">
-        Action
-      </button>
-
-      <button className="rounded-md bg-emerald-600 px-3 py-1.5 text-sm text-white hover:bg-emerald-500">
-        Action
-      </button>
-</button>
-// state update 10
-// TODO: refine seed.ts layout spacing
-// state update 34
-// TODO: refine seed.ts layout spacing
