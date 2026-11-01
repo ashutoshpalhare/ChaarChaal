@@ -1,12 +1,16 @@
 {
-  "name": "react-vite-tailwind",
+  "name": "chaarchaal",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "esbuild --bundle src/tests/run.ts --outfile=dist-tests.mjs --format=esm --platform=node && node dist-tests.mjs",
+    "test:smoke": "esbuild --bundle src/tests/smoke.tsx --outfile=dist-smoke.mjs --format=esm --platform=node --external:react-dom/server --jsx=automatic && node dist-smoke.mjs",
+    "check": "npm run typecheck && npm test && npm run test:smoke && npm run build"
   },
   "dependencies": {
     "clsx": "2.1.1",
@@ -24,6 +28,11 @@
     "tailwindcss": "4.1.17",
     "typescript": "5.9.3",
     "vite": "7.3.2",
-    "vite-plugin-singlefile": "2.3.0"
+    "vite-plugin-singlefile": "2.3.0",
+    "esbuild": "0.27.7"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0",
+    "npm": ">=10.0.0"
   }
 }

@@ -2,11 +2,15 @@
  * Render smoke test — renders every route to a string to catch runtime errors
  * in the component tree (missing imports, undefined variables, bad props).
  *
- *   npx esbuild --bundle src/tests/smoke.tsx --outfile=dist-smoke.mjs \
- *     --format=esm --platform=node --jsx=automatic && node dist-smoke.mjs
+ *   esbuild --bundle src/tests/smoke.tsx --outfile=dist-smoke.mjs \
+ *     --format=esm --platform=node --external:react-dom/server \
+ *     --jsx=automatic && node dist-smoke.mjs
  */
 
-import { renderToString } from "react-dom/server";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const { renderToString } = require("react-dom/server") as typeof import("react-dom/server");
 import "./engine.test";
 import "./game.test";
 import "./ui.test";
