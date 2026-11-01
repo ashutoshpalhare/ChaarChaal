@@ -1,0 +1,64 @@
+name: One-time dependency lockfile refresh
+
+on:
+  push:
+    branches:
+      - security/remediate-dependencies
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dependency-lock-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh-and-validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout remediation branch
+        uses: actions/checkout@v4
+        with:
+          ref: security/remediate-dependencies
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Regenerate lockfile from package.json
+        run: npm install --package-lock-only --ignore-scripts --no-audit
+
+      - name: Install exact locked dependencies
+        run: npm ci
+
+      - name: Run complete project checks
+        run: npm run check
+
+      - name: Verify targeted advisories are cleared
+        run: |
+          npm audit --json > npm-audit.json || true
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const report = JSON.parse(fs.readFileSync('npm-audit.json', 'utf8'));
+          const affected = Object.keys(report.vulnerabilities ?? {});
+          const targets = affected.filter((name) => name === 'vite' || name === 'esbuild');
+          const summary = report.metadata?.vulnerabilities ?? {};
+          console.log('npm audit severity totals:', summary);
+          console.log('Remaining affected packages:', affected);
+          if (targets.length) {
+            console.error('Targeted packages still have advisories:', targets);
+            process.exit(1);
+          }
+          NODE
+
+      - name: Commit regenerated lockfile and remove one-time workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/refresh-security-lockfile.yml
+          git add package-lock.json
+          git commit -m "chore(security): regenerate lockfile and validate dependency fixes"
+          git push origin security/remediate-dependencies
