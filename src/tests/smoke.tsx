@@ -7,7 +7,10 @@
  *     --jsx=automatic && node dist-smoke.mjs
  */
 
-import { renderToString } from "react-dom/server";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const { renderToString } = require("react-dom/server") as typeof import("react-dom/server");
 import "./engine.test";
 import "./game.test";
 import "./ui.test";
