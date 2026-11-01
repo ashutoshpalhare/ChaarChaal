@@ -164,10 +164,10 @@ The suite (`src/tests/`) covers:
 
 ChaarChal is a pure static build — no server runtime is required.
 
-1. Push the repository to GitHub.
-2. In repository settings, choose **Pages → Source: GitHub Actions** when the deployment workflow is added.
-3. The GitHub Pages deployment workflow is intentionally scheduled for the dedicated deployment phase; the current CI workflow validates the code but does not publish the site.
-4. Once deployment is enabled, the site will be served at `https://<username>.github.io/<repository>/`.
+1. The site is published automatically from `main` by `.github/workflows/deploy-pages.yml`.
+2. In repository settings, choose **Pages → Source: GitHub Actions**.
+3. Every successful deployment is published at **https://ashutoshpalhare.github.io/ChaarChaal/**.
+4. Pull requests run the normal CI checks; only pushes to `main` publish the live site.
 
 Because the production build is a **single self-contained `index.html`** (via
 `vite-plugin-singlefile`) there are no external asset URLs to break, and navigation uses **hash

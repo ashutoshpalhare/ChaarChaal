@@ -10,6 +10,8 @@ const __dirname = path.dirname(__filename);
 
 // https://vite.dev/config/
 export default defineConfig({
+  // GitHub Pages project-site path: https://ashutoshpalhare.github.io/ChaarChaal/
+  base: "/ChaarChaal/",
   plugins: [react(), tailwindcss(), viteSingleFile()],
   resolve: {
     alias: {
