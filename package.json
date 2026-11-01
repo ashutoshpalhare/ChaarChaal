@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "esbuild --bundle src/tests/run.ts --outfile=dist-tests.mjs --format=esm --platform=node && node dist-tests.mjs",
-    "test:smoke": "esbuild --bundle src/tests/smoke.tsx --outfile=dist-smoke.mjs --format=esm --platform=node --external:react-dom/server --jsx=automatic && node dist-smoke.mjs",
+    "test:smoke": "esbuild --bundle src/tests/smoke.tsx --outfile=dist-smoke.mjs --format=esm --platform=node --external:react --external:react/* --external:react-dom --external:react-dom/* --jsx=automatic && node dist-smoke.mjs",
     "check": "npm run typecheck && npm test && npm run test:smoke && npm run build"
   },
   "dependencies": {
