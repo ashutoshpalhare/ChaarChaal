@@ -32,11 +32,15 @@ cosmetics and resumable matches. No account, no backend, no tracking.
 ```bash
 npm install        # install dependencies
 npm run dev        # start the dev server (http://localhost:5173)
+npm run typecheck  # TypeScript validation
+npm test           # game-engine and application logic tests
+npm run test:smoke # render smoke tests for every app route
 npm run build      # production build into dist/
 npm run preview    # preview the production build locally
+npm run check      # run all checks and the production build
 ```
 
-Requirements: Node 18+ (Node 20 recommended).
+Requirements: Node.js `^20.19.0` or `>=22.12.0`, and npm `>=10`. Use Node.js 22 LTS for local development and CI.
 
 ChaarChal is a **static site** — after `npm run build` the whole game lives in `dist/index.html`.
 Drop it on any static host and it works.
@@ -147,40 +151,23 @@ visible button does something real.
 ## Testing
 
 ```bash
-npx tsc --noEmit                                                  # type-check
-npx esbuild --bundle src/tests/run.ts --outfile=dist-tests.mjs \
-        --format=esm --platform=node && node dist-tests.mjs       # run the suite
+npm run typecheck  # TypeScript validation
+npm test           # run the full game and application test suite
+npm run test:smoke # render every route to catch component-tree failures
 ```
 
+`npm run check` executes all three checks followed by a production build. The same commands run in GitHub Actions for pull requests and pushes to `main`.
+
 The suite (`src/tests/`) covers:
-
-- **Dice** — value range, determinism, seed advance, all six faces appear.
-- **Legal moves** — entry requirements, exact travel distance, exact roll to finish, finished
-  chaals cannot move, illegal input is a no-op.
-- **Captures** — victim returns to the yard, safe squares, `safeSquares=false`, blocking pairs,
-  `blocking=false`, stacking your own chaals.
-- **Extra turns** — six, capture, home, and each rule switched off; the three-six penalty.
-- **Turn transitions** — no legal move, skipping finished players, phase guards.
-- **Win conditions** — first to finish, play-for-rankings, ranking tie-breaks.
-- **AI** — always returns a legal move, prefers finishing, prefers captures on Hard, detects
-  threats, never mutates the state it is given.
-- **Progression** — achievements unlock once, cosmetics respect unlock rules.
-- **Persistence** — settings/profile guards reject malformed payloads.
-- **Full match simulations** — nine complete matches (2/3/4 players × Easy/Medium/Hard) played by
-  the AI from the opening roll to the final ranking, asserting invariants after every move.
-
-The same suite is available in the app under **Self tests** (`#/diagnostics`), so players can verify
-the rules engine in their own browser.
 
 ## GitHub Pages deployment
 
 ChaarChal is a pure static build — no server runtime is required.
 
 1. Push the repository to GitHub.
-2. In the repository settings, choose **Pages → Source: GitHub Actions**.
-3. The included workflow (`.github/workflows/deploy.yml`) type-checks, runs the test suite, builds
-   with `vite build --base=./` and publishes `dist/`.
-4. The site is served at `https://<username>.github.io/<repository>/`.
+2. In repository settings, choose **Pages → Source: GitHub Actions** when the deployment workflow is added.
+3. The GitHub Pages deployment workflow is intentionally scheduled for the dedicated deployment phase; the current CI workflow validates the code but does not publish the site.
+4. Once deployment is enabled, the site will be served at `https://<username>.github.io/<repository>/`.
 
 Because the production build is a **single self-contained `index.html`** (via
 `vite-plugin-singlefile`) there are no external asset URLs to break, and navigation uses **hash
