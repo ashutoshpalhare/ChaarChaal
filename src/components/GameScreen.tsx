@@ -1,6 +1,6 @@
 /** In-match screen: board, dice, players, event feed, coach and overlays. */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
   Bot,
@@ -39,6 +39,15 @@ export function GameScreen() {
   const [pauseOpen, setPauseOpen] = useState(false);
   const [quitOpen, setQuitOpen] = useState(false);
   const [rolling, setRolling] = useState(false);
+  const rollingTimeout = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (rollingTimeout.current !== null) {
+        window.clearTimeout(rollingTimeout.current);
+      }
+    };
+  }, []);
 
   const activePlayer = state ? currentPlayer(state) : null;
   const isHumanTurn = activePlayer?.kind === "human";
@@ -49,7 +58,11 @@ export function GameScreen() {
     if (!canRoll) return;
     setRolling(true);
     session.roll();
-    window.setTimeout(() => setRolling(false), 700);
+    if (rollingTimeout.current !== null) window.clearTimeout(rollingTimeout.current);
+    rollingTimeout.current = window.setTimeout(() => {
+      rollingTimeout.current = null;
+      setRolling(false);
+    }, 700);
   };
 
   /* keyboard: R / Space to roll, 1-4 to pick a chaal, Esc to pause */
