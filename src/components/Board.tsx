@@ -102,7 +102,7 @@ export function Board({
 
   return (
     <div className="board-frame">
-      <div className="board-face" role="img" aria-label="ChaarChal board">
+      <div className="board-face" role="group" aria-label="ChaarChal game board">
         {/* -------------------------------------------------------- yards */}
         {COLORS.map((color) => {
           const rect = YARD_RECT[color];
