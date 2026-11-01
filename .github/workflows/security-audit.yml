@@ -1,0 +1,87 @@
+name: Dependency Security Audit
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/security-audit.yml"
+  schedule:
+    - cron: "23 8 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependency-audit-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    name: npm dependency audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Generate security audit report
+        id: audit
+        run: |
+          npm audit --json > npm-audit.json || true
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+
+          const report = JSON.parse(fs.readFileSync('npm-audit.json', 'utf8'));
+          const counts = report.metadata?.vulnerabilities ?? {};
+          const vulnerabilities = Object.entries(report.vulnerabilities ?? {});
+
+          const lines = [
+            '## Dependency security audit',
+            '',
+            '| Severity | Count |',
+            '| --- | ---: |',
+            ...['critical', 'high', 'moderate', 'low', 'info'].map(
+              (level) => `| ${level} | ${counts[level] ?? 0} |`
+            ),
+            '',
+            `**Total affected packages:** ${vulnerabilities.length}`,
+            ''
+          ];
+
+          for (const [name, item] of vulnerabilities) {
+            lines.push(
+              `### ${name} — ${item.severity}`,
+              `- Affected range: ${item.range}`,
+              `- Direct dependency: ${item.isDirect ? 'yes' : 'no'}`,
+              `- Fix available: ${JSON.stringify(item.fixAvailable ?? false)}`,
+              `- Advisory: ${(item.via ?? []).filter((entry) => typeof entry === 'object').map((entry) => entry.url ?? entry.title).join(', ') || 'See npm audit artifact'}`,
+              ''
+            );
+          }
+
+          if (vulnerabilities.length === 0) lines.push('No known dependency vulnerabilities found.');
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join('\n') + '\n');
+          console.log(lines.join('\n'));
+          NODE
+
+      - name: Upload machine-readable audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-audit-report
+          path: npm-audit.json
+          if-no-files-found: ignore
+          retention-days: 14
